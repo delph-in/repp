@@ -1,0 +1,69 @@
+== Details on how characterisation is tracked through the different rule
+applications 
+
+
+For each application of a rule s/_target_/_format_/g applied to string1 to get
+string2 (where string1 != string2), produce two integer vectors of length
+string2.length()+2. The first and last cell of the vector represent the
+zero-length start and end anchors respectively. The other cells all align to a
+character in the new string. 
+
+Vector 1 is the startmap. Each cell contains the offset required to get the
+index of the cell in the previous startmap that has the same start position.
+
+Vector 2 is the endmap. Each cell contains the offset required to get the index
+of the cell in the previous endmap that has the same end position. 
+
+That is, the start position of the ith (1-based) character of string2 is the
+same as the jth character of string1, when j = i+startmap[i]. If j == 0 or
+string2.length()-1 (last cell), the 'character' indicated is actually a
+boundary. Initial mapping vectors (before any rules are applied) make sure that
+these boundary 'characters' are adjusted to point to the right character. (The
+first cell of startmap is shifted one to the right, the last cell of endmap is
+shifted one to the left.)
+
+Calculating these start and end maps relies on boundaries within the _target_
+and _format_. Relevant boundaries are:
+
+* start and end of string1 and string2
+* start and end of the spans of string1 matched by _target_
+* start and end of the spans of string2 produced by applying _format_ to 
+	_target_
+* start and end position of every capture group from _target_ matched in string1
+	and the start and end positions of spans in string2 produced by expanding
+	capture group references, *up to the point that the capture groups are in
+	order in _target_*
+
+After a partial match (a single match of _target_), spans in the (possibly
+not-yet complete) string2 can be divided into four types:
+
+* Span prior to the match (but after any previous matches)
+	- offset is zero, plus any shift incurred in previous matches
+* Span after the final match
+	- offset is zero, plus any shift incurred in this or previous matches
+* Span produced by expanding capture group references
+	- offset is zero, plus any shift incurred in previous matches, or so far in
+	  this one
+* Span within the match, but not coming from a capture group
+	- should have a start point equal to the end point of the last capture group
+	  reference (or the start of the match)
+	- should have an end point equal to the start point of the next capture group
+	  reference (or the end of the match)
+	- start offset is decreased through the span, so each character maps to the
+	  same point, with the offset of the first character equal to any shift
+	  incurred in previous matches, or so far in this one
+	- end offset is decreased through the span, so each character maps to the
+	  same point, with the offset of *last* character of this span equal to any
+	  shift incurred in previous matches, or so far in this one, plus any shift
+	  resulting from this span. To get the right offset for the *first* character
+	  of the span, add size of span (gap) - 1.
+
+ where shift is the difference between the matched span and the replacement
+ span. Since match prefix, suffix and capture groups replace like with like,
+ only spans of the last type can cause a modification to shift.
+
+After final tokenisation (where again, indexes need to be kept), the first and
+last character of a token can be traced back through the {start,end}maps. The
+final index from the startmap should be decremented by one (since it's a 1-based
+array to allow for the initial anchor). Final index from the endmaps should give
+the token end position directly.
