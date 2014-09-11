@@ -26,8 +26,12 @@ tTokenPrinter::tTokenPrinter(string f, ostream &out)
 	else {
 		if (f.compare("triple") == 0)
 			_format = TRIPLE;
-		else
-			_format = STRING;
+		else {
+			if (f.compare("offsets") == 0)
+				_format = OFFSETS;
+			else
+				_format = STRING;
+		}
 	}
 }
 
@@ -38,6 +42,9 @@ void tTokenPrinter::tok_sep()
 			*_out << endl;
 			break;
 		case TRIPLE:
+			*_out << endl;
+			break;
+		case OFFSETS:
 			*_out << endl;
 			break;
 		case STRING:
@@ -55,6 +62,9 @@ void tTokenPrinter::line_sep()
 		case TRIPLE:
 			*_out << "\n" << endl;
 			break;
+		case OFFSETS:
+			*_out << "\n" << endl;
+			break;
 		case STRING:
 			*_out << endl;
 			break;
@@ -70,6 +80,10 @@ void tTokenPrinter::token(tToken *t)
 		case TRIPLE:
 			*_out << "(" << t->start() << ", " << t->end() << ", "
 				<< t->surface() << ")";
+			break;
+		case OFFSETS:
+			*_out << "<" << t->start() << ":" << t->end() << "> "
+				<< t->surface();
 			break;
 		case STRING:
 			*_out << t->surface();

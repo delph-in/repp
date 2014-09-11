@@ -22,7 +22,7 @@ class tToken {
 		int _end;
 };
 
-enum FormatType {STRING, LINE, TRIPLE};
+enum FormatType {STRING, LINE, TRIPLE, OFFSETS};
 class tTokenPrinter {
 	public:
 		tTokenPrinter(std::string format, std::ostream &out);

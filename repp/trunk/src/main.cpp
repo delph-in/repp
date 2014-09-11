@@ -85,7 +85,7 @@ void parse_options(int ac, char **av, ifstream *ifile, tdlOptions *repp_opts)
 		("help,h,?", "This usage information.")
 		("config,c", po::value<string>(), "Configuration file (REQUIRED).")
 		("format", po::value<string>(&format),
-			"Token format: string, line, triple (default string).")
+			"Token format: string, line, offsets, triple (default string).")
 		("rpp,r", po::value<string>(&rpp_dir),
 			"Specify non-default location of directory containing repp modules."
 			" (Default locations are relative to the config file. See README.)")
@@ -136,7 +136,7 @@ void parse_options(int ac, char **av, ifstream *ifile, tdlOptions *repp_opts)
 	else {
 		string cformat = repp_opts->get("format");
 		if (!(cformat.compare("string") == 0 || cformat.compare("line") == 0||
-				cformat.compare("triple") == 0)) { 
+				cformat.compare("triple") == 0 || cformat.compare("offsets") == 0)) { 
 			cerr << "Warning: invalid format ``" << format << "''. "
 				<< "Setting format=string." << endl;
 			repp_opts->set("format", "string");
