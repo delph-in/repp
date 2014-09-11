@@ -10,6 +10,7 @@ In the top level directory, run
 	make
 
 DEPENDENCIES
+	a C++ compiler (g++, clang, etc)
 	Boost Program_options
 	Boost Filesystems
 	Boost Regex
