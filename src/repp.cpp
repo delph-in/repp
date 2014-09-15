@@ -26,13 +26,18 @@
 #include <iostream>
 #include <cmath>
 #include <stdexcept>
+#ifdef REPP_STANDALONE
 #include <boost/filesystem.hpp>
+#endif
 
 #include "unicode.h"
 #include "tdl_options.h"
 
 using namespace std;
+
+#ifdef REPP_STANDALONE
 namespace boostfs = boost::filesystem;
+#endif
 
 string boostescape(string esc);
 #ifdef REPP_STANDALONE
@@ -63,6 +68,7 @@ tReppTokenizer::tReppTokenizer(tdlOptions *s)
   if (_repp_opts->lookup("repp-tokenizer") == NULL)
     throw runtime_error("No REPP top-level module; "
                  "please check the 'repp-tokenizer' setting.");
+#ifdef REPP_STANDALONE
   if (_repp_opts->lookup("repp-directory") == NULL) {
     //not explicitly set, look in standard places relative to config file
     boostfs::path cdir(_repp_opts->get("repp-configdir"));
@@ -87,6 +93,7 @@ tReppTokenizer::tReppTokenizer(tdlOptions *s)
       }
     }
   }
+#endif
  _repp_dir = _repp_opts->get("repp-directory");
 
   // find modules from setting 'repp-modules' and read in each file
