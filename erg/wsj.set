@@ -1,3 +1,14 @@
+;;
+;; REPP tokenization builds on a collection of rule sets, each in a file of its
+;; own.  these are called modules (or at times just REPPs), and all are loaded
+;; into the processor.  a specific configuration is then obtained by picking
+;; one REPP module as the top-level entry point, and determining which named
+;; group calls (to other modules) should be allowed, if called.  the following
+;; is the global set of available modules.
+;;
+repp-modules := 
+  tokenizer xml latex ascii html wiki lgt gml robustness quotes ptb lkb.
+
 ;;;
 ;;; in our ‘raw’ text version of the WSJ corpus, single quotes appear in left
 ;;; vs. right variants (using LaTeX-style conventions), but double quotes are
@@ -7,3 +18,8 @@
 ;;; quote treatment into separate modules for single vs. double quotes ...
 ;;;
 repp-calls := xml ascii latex lgt quotes.
+
+;;
+;; the REPP module to provide the top-level entry point.
+;;
+repp-tokenizer := tokenizer.
